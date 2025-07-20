@@ -23,9 +23,6 @@ public class HtmlRenderer : TextRendererBase<HtmlRenderer>
 {
     private static readonly IdnMapping s_idnMapping = new();
 
-    private static readonly SearchValues<char> s_asciiNonEscapeChars =
-        SearchValues.Create("!#$%()*+,-./0123456789:;=?@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz");
-
     /// <summary>
     /// Initializes a new instance of the <see cref="HtmlRenderer"/> class.
     /// </summary>
@@ -144,7 +141,10 @@ public class HtmlRenderer : TextRendererBase<HtmlRenderer>
         return this;
     }
 
-    public virtual SearchValues<char> SEscapedChars { get; set; } = SearchValues.Create("<>&\"");
+    protected virtual SearchValues<char> SEscapedChars { get; set; } = SearchValues.Create("<>&\"");
+
+    protected virtual SearchValues<char> SAsciiNonEscapeChars { get; set; } =
+        SearchValues.Create("!#$%()*+,-./0123456789:;=?@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz");
 
     /// <summary>
     /// Writes the content escaped for HTML.
@@ -253,7 +253,7 @@ public class HtmlRenderer : TextRendererBase<HtmlRenderer>
 
         while (true)
         {
-            int i = content.IndexOfAnyExcept(s_asciiNonEscapeChars);
+            int i = content.IndexOfAnyExcept(SAsciiNonEscapeChars);
 
             if ((uint)i >= (uint)content.Length)
             {
